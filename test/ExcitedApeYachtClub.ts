@@ -4,47 +4,47 @@ import { ethers } from 'hardhat';
 import { makeMerkleTreeData } from '../utils/merkletree';
 import { makeUsers, usersQuantity } from '../utils/data';
 
-describe('ExcitedApeYatchClub', function () {
+describe('ExcitedApeYachtClub', function () {
   async function deployOneYearLockFixture() {
     const merkleTreeData = await makeMerkleTreeData();
     const users = await makeUsers();
     const { merkleRoot } = merkleTreeData;
 
-    const ExcitedApeYatchClub = await ethers.getContractFactory(
-      'ExcitedApeYatchClub'
+    const ExcitedApeYachtClub = await ethers.getContractFactory(
+      'ExcitedApeYachtClub'
     );
-    const excitedApeYatchClub = await ExcitedApeYatchClub.deploy(merkleRoot);
+    const excitedApeYachtClub = await ExcitedApeYachtClub.deploy(merkleRoot);
 
-    return { excitedApeYatchClub, merkleTreeData, users };
+    return { excitedApeYachtClub, merkleTreeData, users };
   }
   beforeEach(async function () {
-    const { excitedApeYatchClub, users, merkleTreeData } = await loadFixture(
+    const { excitedApeYachtClub, users, merkleTreeData } = await loadFixture(
       deployOneYearLockFixture
     );
-    this.excitedApeYatchClub = excitedApeYatchClub;
+    this.excitedApeYachtClub = excitedApeYachtClub;
     this.users = users;
     this.merkleTreeData = merkleTreeData;
   });
 
   describe('Deployment', function () {
     it('Should return correct name and symbol', async function () {
-      expect(await this.excitedApeYatchClub.name()).to.equal(
+      expect(await this.excitedApeYachtClub.name()).to.equal(
         'Excited Ape Yacht Club'
       );
-      expect(await this.excitedApeYatchClub.symbol()).to.equal('EAYC');
+      expect(await this.excitedApeYachtClub.symbol()).to.equal('EAYC');
     });
   });
 
   describe('mint', function () {
     beforeEach(async function () {
-      await this.excitedApeYatchClub
+      await this.excitedApeYachtClub
         .connect(this.users.alice)
         .mint(
           usersQuantity.alice,
           this.merkleTreeData.proofs[await this.users.alice.getAddress()]
         );
 
-      await this.excitedApeYatchClub
+      await this.excitedApeYachtClub
         .connect(this.users.bob)
         .mint(
           usersQuantity.bob,
@@ -53,13 +53,13 @@ describe('ExcitedApeYatchClub', function () {
     });
 
     it('Should allow whitelisted users to mint', async function () {
-      const aliceBalance = await this.excitedApeYatchClub.balanceOf(
+      const aliceBalance = await this.excitedApeYachtClub.balanceOf(
         await this.users.alice.getAddress()
       );
 
       expect(aliceBalance).to.equal(1);
 
-      const bobBalance = await this.excitedApeYatchClub.balanceOf(
+      const bobBalance = await this.excitedApeYachtClub.balanceOf(
         await this.users.bob.getAddress()
       );
 
@@ -68,7 +68,7 @@ describe('ExcitedApeYatchClub', function () {
 
     it('Should revert when users try to mint over allowed quantity', async function () {
       try {
-        await this.excitedApeYatchClub
+        await this.excitedApeYachtClub
           .connect(this.users.alice)
           .mint(
             2,
@@ -81,12 +81,11 @@ describe('ExcitedApeYatchClub', function () {
 
     it('Should revert when non-whitelisted users try to mint', async function () {
       try {
-        await this.excitedApeYatchClub
-          .connect(this.users.david)
-          .mint(
-            1,
-            this.merkleTreeData.proofs[await this.users.david.getAddress()]
-          );
+        await this.excitedApeYachtClub.connect(this.users.david).mint(
+          1,
+          // david stole alice proofs
+          this.merkleTreeData.proofs[await this.users.alice.getAddress()]
+        );
       } catch (error: any) {
         expect(error.message).to.contains('invalid proof');
       }

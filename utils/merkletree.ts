@@ -41,10 +41,8 @@ export const makeMerkleTreeData = async (): Promise<MerkleTreeData> => {
   const leavesValue = Object.values(leaves);
 
   const merkleTree = new MerkleTree(leavesValue, keccak256, { sort: true });
-  console.log('tree', merkleTree.toString());
 
   const merkleRoot = merkleTree.getHexRoot();
-  console.log('merkleRoot', merkleRoot);
 
   const proofs = makeProofs(merkleTree, inputs, leaves);
 
