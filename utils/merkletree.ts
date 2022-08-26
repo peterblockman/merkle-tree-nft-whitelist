@@ -1,55 +1,44 @@
 import { ethers } from 'hardhat';
 import keccak256 from 'keccak256';
 import { MerkleTree } from 'merkletreejs';
-import { makeInputs, usernames, usersQuantity } from './data';
 
-import { Leaves, MerkleTreeData, Input, Inputs, Proofs } from './interfaces';
+import { MerkleTreeData } from './interfaces';
 
-const makeLeaves = (users: Inputs): Leaves => {
-  const leaves = users.reduce((acc: Leaves, x: Input) => {
-    const leaf = ethers.utils.solidityKeccak256(
+export const makeMerkleTree = async (): Promise<MerkleTreeData> => {
+  const signers = await ethers.getSigners();
+  // alice, bob, carol
+  const inputs = [
+    {
+      address: signers[1].address,
+      quantity: 1,
+    },
+    {
+      address: signers[2].address,
+      quantity: 2,
+    },
+    {
+      address: signers[3].address,
+      quantity: 1,
+    },
+  ];
+
+  // create leaves from inputs
+  const leaves = inputs.map((x) =>
+    ethers.utils.solidityKeccak256(
       ['address', 'uint256'],
       [x.address, x.quantity]
-    );
-    return {
-      ...acc,
-      [x.address]: leaf,
-    };
-  }, {} as Leaves);
+    )
+  );
 
-  return leaves;
-};
+  // create a Merkle Tree using keccak256 hash function
+  const tree = new MerkleTree(leaves, keccak256, { sort: true });
 
-const makeProofs = (merkleTree: MerkleTree, users: Inputs, leaves: Leaves) => {
-  return users.reduce((acc: Proofs, user: Input) => {
-    const { address } = user;
-    const leaf = leaves[address];
-    if (!leaf) throw new Error(`Leaf not found: ${address}`);
-    const proof = merkleTree.getHexProof(leaf);
-    return {
-      ...acc,
-      [address]: proof,
-    };
-  }, {} as Proofs);
-};
+  // get the root
+  const root = tree.getHexRoot();
 
-export const makeMerkleTreeData = async (): Promise<MerkleTreeData> => {
-  const inputs = await makeInputs(usernames, usersQuantity);
-
-  const leaves = makeLeaves(inputs);
-
-  const leavesValue = Object.values(leaves);
-
-  const merkleTree = new MerkleTree(leavesValue, keccak256, { sort: true });
-  console.log('tree', merkleTree.toString());
-
-  const merkleRoot = merkleTree.getHexRoot();
-  console.log('merkleRoot', merkleRoot);
-
-  const proofs = makeProofs(merkleTree, inputs, leaves);
-
+  const proofs = leaves.map((leaf) => tree.getHexProof(leaf));
   return {
-    merkleRoot,
     proofs,
+    root,
   };
 };
