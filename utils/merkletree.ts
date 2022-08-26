@@ -33,7 +33,7 @@ const makeProofs = (merkleTree: MerkleTree, users: Inputs, leaves: Leaves) => {
   }, {} as Proofs);
 };
 
-export const makeMerkleTreeData = async (): Promise<MerkleTreeData> => {
+export const makeMerkleTree = async (): Promise<MerkleTreeData> => {
   const inputs = await makeInputs(usernames, usersQuantity);
 
   const leaves = makeLeaves(inputs);
@@ -42,12 +42,12 @@ export const makeMerkleTreeData = async (): Promise<MerkleTreeData> => {
 
   const merkleTree = new MerkleTree(leavesValue, keccak256, { sort: true });
 
-  const merkleRoot = merkleTree.getHexRoot();
+  const root = merkleTree.getHexRoot();
 
   const proofs = makeProofs(merkleTree, inputs, leaves);
 
   return {
-    merkleRoot,
+    root,
     proofs,
   };
 };

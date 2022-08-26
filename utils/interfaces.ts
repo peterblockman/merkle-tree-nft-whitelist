@@ -17,6 +17,6 @@ export type Leaves = Record<string, string>;
 export type Proofs = Record<string, string[]>;
 
 export interface MerkleTreeData {
-  merkleRoot: string;
+  root: string;
   proofs: Proofs;
 }

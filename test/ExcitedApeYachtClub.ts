@@ -1,19 +1,19 @@
 import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
-import { makeMerkleTreeData } from '../utils/merkletree';
+import { makeMerkleTree } from '../utils/merkletree';
 import { makeUsers, usersQuantity } from '../utils/data';
 
 describe('ExcitedApeYachtClub', function () {
   async function deployOneYearLockFixture() {
-    const merkleTreeData = await makeMerkleTreeData();
+    const merkleTreeData = await makeMerkleTree();
     const users = await makeUsers();
-    const { merkleRoot } = merkleTreeData;
+    const { root } = merkleTreeData;
 
     const ExcitedApeYachtClub = await ethers.getContractFactory(
       'ExcitedApeYachtClub'
     );
-    const excitedApeYachtClub = await ExcitedApeYachtClub.deploy(merkleRoot);
+    const excitedApeYachtClub = await ExcitedApeYachtClub.deploy(root);
 
     return { excitedApeYachtClub, merkleTreeData, users };
   }
