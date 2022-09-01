@@ -5,7 +5,7 @@ import { makeMerkleTree } from '../utils/merkletree';
 import { makeUsers } from '../utils/data';
 
 describe('ExcitedApeYachtClub', function () {
-  async function deployOneYearLockFixture() {
+  async function createTestFixture() {
     const merkleTreeData = await makeMerkleTree();
     const { root } = merkleTreeData;
 
@@ -22,7 +22,7 @@ describe('ExcitedApeYachtClub', function () {
 
   beforeEach(async function () {
     const { excitedApeYachtClub, users, merkleTreeData } = await loadFixture(
-      deployOneYearLockFixture
+      createTestFixture
     );
     this.excitedApeYachtClub = excitedApeYachtClub;
     this.users = users;
