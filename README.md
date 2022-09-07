@@ -1,13 +1,11 @@
-# Sample Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## Introduction
+This is the github repo for my blog post: *Understand Merkle tree by making an NFT minting whitelist*. Read it [here](https://peterblockman.hashnode.dev/understand-merkle-tree-by-making-an-nft-minting-whitelist)
 
-Try running some of the following tasks:
+You can reuse the code in your project. Simplified codes that I use in the article:  [feat/simple](https://github.com/peterblockman/merkle-tree-nft-whitelist/tree/feat/simple)
 
+## Quick start 
 ```shell
-npx hardhat help
+npm i
 npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
 ```
